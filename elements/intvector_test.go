@@ -49,3 +49,42 @@ func Test_PaddingWithValidArguments(t *testing.T) {
 		}
 	}
 }
+
+func Test_CopyFromNilSrc(t *testing.T) {
+	v := &IntVector{Values: []int{1, 2, 3, 4, 5}}
+	var src []int
+	if ans := v.CopyFrom(src); ans {
+		t.Errorf("Expected = %v, Got = %v", false, ans)
+	}
+}
+
+func Test_CopyFromNilValues(t *testing.T) {
+	v := &IntVector{Values: nil}
+	dest := []int{9, 8, 7, 6, 5, 4, 3, 2, 1}
+	if ans := v.CopyFrom(dest); ans {
+		for i := range dest {
+			if dest[i] != v.Values[i] {
+				t.Errorf("Different values at array-index %d", i)
+			}
+		}
+	} else {
+		t.Errorf("Expected = %v, Got = %v", true, ans)
+	}
+}
+
+func Test_CopyFromLongerSrc(t *testing.T) {
+	v := &IntVector{Values: []int{1, 2, 3, 4}}
+	dest := []int{9, 8, 7, 6, 5, 4, 3, 2, 1}
+	if ans := v.CopyFrom(dest); ans {
+		t.Errorf("Expected = %v, Got = %v", true, ans)
+	}
+}
+
+func Test_CopyFromDefault(t *testing.T) {
+	v := &IntVector{Values: []int{1, 2, 3, 4}}
+	dest := []int{9, 8, 7}
+	if ans := v.CopyFrom(dest); !ans {
+		t.Errorf("Expected = %v, Got = %v", true, ans)
+	}
+	fmt.Println(v.Values)
+}
