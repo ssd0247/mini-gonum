@@ -2,7 +2,26 @@ package utils
 
 import "math"
 
-// v_funcs
+func Clip(v interface{}, args ...interface{}) interface{} {
+	if len(args) != 2 {
+		panic("invalid number of arguments for v_func:clip")
+	}
+	if v.(float64) < args[0].(float64) {
+		return args[0]
+	}
+	if v.(float64) > args[1].(float64) {
+		return args[1]
+	}
+	return v
+}
+
+func Fill(value interface{}, args ...interface{}) interface{} {
+	return args[0]
+}
+
+func FillIndex(value interface{}, args ...interface{}) interface{} {
+	return args[0]
+}
 
 func Exp(val interface{}, args ...interface{}) interface{} {
 	return math.Exp(val.(float64))
@@ -51,8 +70,6 @@ func Div(val interface{}, args ...interface{}) interface{} {
 func Pow(val interface{}, args ...interface{}) interface{} {
 	return math.Pow(val.(float64), args[0].(float64))
 }
-
-// r_funcs
 
 func Sum(red, value interface{}, args ...interface{}) interface{} {
 	return red.(float64) + value.(float64)
