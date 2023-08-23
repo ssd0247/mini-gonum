@@ -2,6 +2,15 @@ package elements
 
 import "fmt"
 
+var (
+	pad_prefix_type_err   = "[PAD-ERROR]: provide boolean argument for optional parameter 'prefix'. Provided %T"
+	pad_out_of_domain_err = "[PAD-ERROR]: Either length or prefix value is out-of-domain"
+
+	mult_no_arg_err             = "[MULT-ERROR]: no argument provided"
+	mult_vec_diff_len_err       = "[MULT-ERROR]: vectors are of different lengths"
+	mult_type_not_supported_err = "[MULT-ERROR]: type implements interface, does not support multiplication"
+)
+
 // optArg type is used to describe optional arguments
 type optArg interface{}
 
@@ -49,7 +58,7 @@ func (v *IntVector) Zeros() {
 // value.
 func (v *IntVector) Padding(val, len int, prefix optArg) error {
 	if len <= 0 || prefix == nil {
-		return nil
+		return fmt.Errorf(pad_out_of_domain_err)
 	}
 	d := make([]int, len)
 	for i := range d {
@@ -63,7 +72,7 @@ func (v *IntVector) Padding(val, len int, prefix optArg) error {
 		}
 		return nil
 	} else {
-		return fmt.Errorf("[PADDING-ERROR]: provide boolean argument for optional parameter 'prefix'. Provided %T", prefix)
+		return fmt.Errorf(pad_prefix_type_err, prefix)
 	}
 }
 
@@ -111,7 +120,7 @@ func multHelper[T Number](v *IntVector, a T) {
 func (v *IntVector) Mult(a interface{}) (interface{}, error) {
 	switch x := a.(type) {
 	case nil:
-		return nil, fmt.Errorf("[MULT-ERROR]: no argument provided")
+		return nil, fmt.Errorf(mult_no_arg_err)
 	case int:
 		multHelper(v, x)
 		return v.Values, nil
@@ -123,7 +132,7 @@ func (v *IntVector) Mult(a interface{}) (interface{}, error) {
 		return v.Values, nil
 	case *IntVector:
 		if len(x.Values) != len(v.Values) {
-			return nil, fmt.Errorf("[MULT-ERROR]: vectors are of different lengths")
+			return nil, fmt.Errorf(mult_vec_diff_len_err)
 		}
 		multValue := 1
 		for i := range v.Values {
@@ -131,6 +140,6 @@ func (v *IntVector) Mult(a interface{}) (interface{}, error) {
 		}
 		return multValue, nil
 	default:
-		return nil, fmt.Errorf("[MULT-ERROR]: type implements interface, does not support multiplication")
+		return nil, fmt.Errorf(mult_type_not_supported_err)
 	}
 }
